@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import net.daw.bean.FacturaBean;
+import net.daw.bean.TipoproductoBean;
 
 public class TipoproductoDao {
 
@@ -20,9 +20,9 @@ public class TipoproductoDao {
         this.ob = ob;
     }
 
-    public FacturaBean get(int id) throws Exception {
+    public TipoproductoBean get(int id) throws Exception {
         String strSQL = "SELECT * FROM " + ob + " WHERE id=?";
-        FacturaBean oFacturaBean;
+        TipoproductoBean oTipoproductoBean;
         ResultSet oResultSet = null;
         PreparedStatement oPreparedStatement = null;
         try {
@@ -30,13 +30,11 @@ public class TipoproductoDao {
             oPreparedStatement.setInt(1, id);
             oResultSet = oPreparedStatement.executeQuery();
             if (oResultSet.next()) {
-                oFacturaBean = new FacturaBean();
-                oFacturaBean.setId(oResultSet.getInt("id"));
-                oFacturaBean.setFecha(oResultSet.getDate("fecha"));
-                oFacturaBean.setIva(oResultSet.getFloat("iva"));
-                oFacturaBean.setId_usuario(oResultSet.getInt("id_usuario"));
+                oTipoproductoBean = new TipoproductoBean();
+                oTipoproductoBean.setId(oResultSet.getInt("id"));
+                oTipoproductoBean.setDesc(oResultSet.getString("desc"));
             } else {
-                oFacturaBean = null;
+                oTipoproductoBean = null;
             }
         } catch (SQLException e) {
             throw new Exception("Error en Dao get de " + ob, e);
@@ -48,7 +46,7 @@ public class TipoproductoDao {
                 oPreparedStatement.close();
             }
         }
-        return oFacturaBean;
+        return oTipoproductoBean;
     }
 
     public int remove(int id) throws Exception {
@@ -93,23 +91,21 @@ public class TipoproductoDao {
         return res;
     }
 
-    public FacturaBean create(FacturaBean oFacturaBean) throws Exception {
+    public TipoproductoBean create(TipoproductoBean oTipoproductoBean) throws Exception {
         String strSQL = "INSERT INTO  " + ddbb + "." + ob
-                + " (" + ddbb + "." + ob + ".id, " + ddbb + "." + ob + ".fecha," + ddbb + "." + ob + ".iva," + ddbb + "." + ob + ".id_usuario)"
-                + " VALUES (NULL, ?,?,?); ";
+                + " (" + ddbb + "." + ob + ".id, " + ddbb + "." + ob + ".desc)"
+                + " VALUES (NULL, ?); ";
         ResultSet oResultSet = null;
         PreparedStatement oPreparedStatement = null;
         try {
             oPreparedStatement = oConnection.prepareStatement(strSQL);
-            oPreparedStatement.setDate(1, oFacturaBean.getFecha());
-            oPreparedStatement.setFloat(2, oFacturaBean.getIva());
-            oPreparedStatement.setInt(3, oFacturaBean.getId_usuario());
+            oPreparedStatement.setString(1, oTipoproductoBean.getDesc());
             oPreparedStatement.executeUpdate();
             oResultSet = oPreparedStatement.getGeneratedKeys();
             if (oResultSet.next()) {
-                oFacturaBean.setId(oResultSet.getInt(1));
+                oTipoproductoBean.setId(oResultSet.getInt(1));
             } else {
-                oFacturaBean.setId(0);
+                oTipoproductoBean.setId(0);
             }
         } catch (SQLException e) {
             throw new Exception("Error en Dao create de " + ob, e);
@@ -121,19 +117,18 @@ public class TipoproductoDao {
                 oPreparedStatement.close();
             }
         }
-        return oFacturaBean;
+        return oTipoproductoBean;
     }
 
-    public int update(FacturaBean oFacturaBean) throws Exception {
+    public int update(TipoproductoBean oTipoproductoBean) throws Exception {
         int iResult = 0;
-        String strSQL = "UPDATE " + ob + " SET fecha = ?, iva=? WHERE id = ?;";
+        String strSQL = "UPDATE " + ob + " SET desc = ? WHERE id = ?;";
 
         PreparedStatement oPreparedStatement = null;
         try {
             oPreparedStatement = oConnection.prepareStatement(strSQL);
-            oPreparedStatement.setDate(1, oFacturaBean.getFecha());
-            oPreparedStatement.setFloat(2, oFacturaBean.getIva());
-            oPreparedStatement.setInt(3, oFacturaBean.getId());
+            oPreparedStatement.setString(1, oTipoproductoBean.getDesc());
+            oPreparedStatement.setInt(3, oTipoproductoBean.getId());
             iResult = oPreparedStatement.executeUpdate();
 
         } catch (SQLException e) {
@@ -146,9 +141,9 @@ public class TipoproductoDao {
         return iResult;
     }
 
-    public ArrayList<FacturaBean> getpage(int iRpp, int iPage) throws Exception {
+    public ArrayList<TipoproductoBean> getpage(int iRpp, int iPage) throws Exception {
         String strSQL = "SELECT * FROM "+ddbb+"."+ob;
-        ArrayList<FacturaBean> alFacturaBean;
+        ArrayList<TipoproductoBean> alTipoproductoBean;
         if (iRpp > 0 && iRpp < 100000 && iPage > 0 && iPage < 100000000) {
             strSQL += " LIMIT " + (iPage - 1) * iRpp + ", " + iRpp;
             ResultSet oResultSet = null;
@@ -156,12 +151,12 @@ public class TipoproductoDao {
             try {
                 oPreparedStatement = oConnection.prepareStatement(strSQL);
                 oResultSet = oPreparedStatement.executeQuery();
-                alFacturaBean = new ArrayList<FacturaBean>();
+                alTipoproductoBean = new ArrayList<TipoproductoBean>();
                 while (oResultSet.next()) {
-                    FacturaBean oFacturaBean = new FacturaBean();
-                    oFacturaBean.setId(oResultSet.getInt("id"));
-                    oFacturaBean.setDesc(oResultSet.getString("desc"));
-                    alFacturaBean.add(oFacturaBean);
+                    TipoproductoBean oTipoproductoBean = new TipoproductoBean();
+                    oTipoproductoBean.setId(oResultSet.getInt("id"));
+                    oTipoproductoBean.setDesc(oResultSet.getString("desc"));
+                    alTipoproductoBean.add(oTipoproductoBean);
                 }
             } catch (SQLException e) {
                 throw new Exception("Error en Dao getpage de " + ob, e);
@@ -176,7 +171,7 @@ public class TipoproductoDao {
         } else {
             throw new Exception("Error en Dao getpage de " + ob);
         }
-        return alFacturaBean;
+        return alTipoproductoBean;
 
     }
 
