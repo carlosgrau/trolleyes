@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package net.daw.dao;
 
 import java.sql.Connection;
@@ -6,12 +11,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import net.daw.bean.LineaBean;
+import net.daw.bean.TipousuarioBean;
 
+/**
+ *
+ * @author a044531896d
+ */
 public class LineaDao {
 
     Connection oConnection;
     String ob = null;
-    String ddbb = "trolleyes";
 
     public LineaDao(Connection oConnection, String ob) {
         super();
@@ -32,8 +41,8 @@ public class LineaDao {
                 oLineaBean = new LineaBean();
                 oLineaBean.setId(oResultSet.getInt("id"));
                 oLineaBean.setCantidad(oResultSet.getInt("cantidad"));
-                oLineaBean.setId_factura(oResultSet.getInt("id_factura"));
                 oLineaBean.setId_producto(oResultSet.getInt("id_producto"));
+                oLineaBean.setId_factura(oResultSet.getInt("id_factura"));
             } else {
                 oLineaBean = null;
             }
@@ -93,16 +102,14 @@ public class LineaDao {
     }
 
     public LineaBean create(LineaBean oLineaBean) throws Exception {
-        String strSQL = "INSERT INTO  " + ddbb + "." + ob
-                + " (" + ddbb + "." + ob + ".id, " + ddbb + "." + ob + ".cantidad," + ddbb + "." + ob + ".id_factura," + ddbb + "." + ob + ".id_producto)"
-                + " VALUES (NULL, ?,?,?); ";
+        String strSQL = "INSERT INTO " + ob + " ("+ob+".id, "+ob+".cantidad, "+ob+".id_producto, "+ob+".id_factura) VALUES (NULL, ?, ?, ?); ";
         ResultSet oResultSet = null;
         PreparedStatement oPreparedStatement = null;
         try {
             oPreparedStatement = oConnection.prepareStatement(strSQL);
             oPreparedStatement.setInt(1, oLineaBean.getCantidad());
-            oPreparedStatement.setInt(2, oLineaBean.getId_factura());
-            oPreparedStatement.setInt(3, oLineaBean.getId_producto());
+            oPreparedStatement.setInt(2, oLineaBean.getId_producto());
+            oPreparedStatement.setInt(3, oLineaBean.getId_factura());
             oPreparedStatement.executeUpdate();
             oResultSet = oPreparedStatement.getGeneratedKeys();
             if (oResultSet.next()) {
@@ -125,14 +132,15 @@ public class LineaDao {
 
     public int update(LineaBean oLineaBean) throws Exception {
         int iResult = 0;
-        String strSQL = "UPDATE " + ob + " SET cantidad = ?, id_factura= ?, id_producto= ? WHERE id = ?;";
+        String strSQL = "UPDATE " + ob + " SET " + ob + ".cantidad = ?, " + ob + ".id_producto = ?, " + ob + ".id_factura=? WHERE " + ob + ".id = ?;";
 
         PreparedStatement oPreparedStatement = null;
         try {
             oPreparedStatement = oConnection.prepareStatement(strSQL);
             oPreparedStatement.setInt(1, oLineaBean.getCantidad());
-            oPreparedStatement.setInt(2, oLineaBean.getId_factura());
-            oPreparedStatement.setInt(3, oLineaBean.getId_producto());
+            oPreparedStatement.setInt(2, oLineaBean.getId_producto());
+            oPreparedStatement.setInt(3, oLineaBean.getId_factura());
+            oPreparedStatement.setInt(4, oLineaBean.getId());
             iResult = oPreparedStatement.executeUpdate();
 
         } catch (SQLException e) {
@@ -146,7 +154,7 @@ public class LineaDao {
     }
 
     public ArrayList<LineaBean> getpage(int iRpp, int iPage) throws Exception {
-        String strSQL = "SELECT * FROM "+ddbb+"."+ob;
+        String strSQL = "SELECT * FROM " + ob;
         ArrayList<LineaBean> alLineaBean;
         if (iRpp > 0 && iRpp < 100000 && iPage > 0 && iPage < 100000000) {
             strSQL += " LIMIT " + (iPage - 1) * iRpp + ", " + iRpp;
@@ -160,8 +168,8 @@ public class LineaDao {
                     LineaBean oLineaBean = new LineaBean();
                     oLineaBean.setId(oResultSet.getInt("id"));
                     oLineaBean.setCantidad(oResultSet.getInt("cantidad"));
-                    oLineaBean.setId_factura(oResultSet.getInt("id_factura"));
                     oLineaBean.setId_producto(oResultSet.getInt("id_producto"));
+                    oLineaBean.setId_factura(oResultSet.getInt("id_factura"));
                     alLineaBean.add(oLineaBean);
                 }
             } catch (SQLException e) {

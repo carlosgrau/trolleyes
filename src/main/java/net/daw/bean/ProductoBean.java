@@ -1,10 +1,22 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package net.daw.bean;
 
+/**
+ *
+ * @author a044531896d
+ */
 public class ProductoBean {
-
-    private int id,id_tipoproducto,existencias;
+    private int id;
+    private String codigo;
+    private String desc;
+    private int existencias;
     private float precio;
-    private String foto,desc,codigo;
+    private String foto;
+    private int id_tipoProducto;
 
     public int getId() {
         return id;
@@ -14,12 +26,20 @@ public class ProductoBean {
         this.id = id;
     }
 
-    public int getId_tipoproducto() {
-        return id_tipoproducto;
+    public String getCodigo() {
+        return codigo;
     }
 
-    public void setId_tipoproducto(int id_tipoproducto) {
-        this.id_tipoproducto = id_tipoproducto;
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 
     public int getExistencias() {
@@ -46,22 +66,11 @@ public class ProductoBean {
         this.foto = foto;
     }
 
-    public String getDesc() {
-        return desc;
+    public int getId_tipoProducto() {
+        return id_tipoProducto;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setId_tipoProducto(int id_tipoProducto) {
+        this.id_tipoProducto = id_tipoProducto;
     }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
-   
-
 }

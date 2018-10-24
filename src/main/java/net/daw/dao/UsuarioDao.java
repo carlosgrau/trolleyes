@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package net.daw.dao;
 
 import java.sql.Connection;
@@ -5,14 +10,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
 import net.daw.bean.UsuarioBean;
 
+/**
+ *
+ * @author jesus
+ */
 public class UsuarioDao {
 
     Connection oConnection;
     String ob = null;
-    String ddbb = "trolleyes";
 
     public UsuarioDao(Connection oConnection, String ob) {
         super();
@@ -32,11 +39,13 @@ public class UsuarioDao {
             if (oResultSet.next()) {
                 oUsuarioBean = new UsuarioBean();
                 oUsuarioBean.setId(oResultSet.getInt("id"));
+                oUsuarioBean.setDni(oResultSet.getString("dni"));
                 oUsuarioBean.setNombre(oResultSet.getString("nombre"));
                 oUsuarioBean.setApe1(oResultSet.getString("ape1"));
                 oUsuarioBean.setApe2(oResultSet.getString("ape2"));
-                oUsuarioBean.setDni(oResultSet.getString("dni"));
-                oUsuarioBean.setId_tipoUsuario(oResultSet.getInt("id_tipousuario"));
+                oUsuarioBean.setLogin(oResultSet.getString("login"));
+                oUsuarioBean.setPass(oResultSet.getString("pass"));
+                oUsuarioBean.setId_tipoUsuario(oResultSet.getInt("id_tipoUsuario"));
             } else {
                 oUsuarioBean = null;
             }
@@ -96,11 +105,7 @@ public class UsuarioDao {
     }
 
     public UsuarioBean create(UsuarioBean oUsuarioBean) throws Exception {
-        String strSQL = "INSERT INTO  " + ddbb + "." + ob
-                + " (" + ddbb + "." + ob + ".id, " + ddbb + "." + ob + ".dni,"
-                + ddbb + "." + ob + ".nombre," + ddbb + "." + ob + ".ape1,"
-                + ddbb + "." + ob + ".ape2,"+ ddbb + "." + ob + ".id_tipousuario)"
-                + " VALUES (NULL, ?,?,?,?,?); ";
+        String strSQL = "INSERT INTO " + ob + " (`id`, `dni`,`nombre`,`ape1`,`ape2`,`login`,`pass`,`id_tipoUsuario`) VALUES (NULL, ?,?,?,?,?,?,?); ";
         ResultSet oResultSet = null;
         PreparedStatement oPreparedStatement = null;
         try {
@@ -109,13 +114,17 @@ public class UsuarioDao {
             oPreparedStatement.setString(2, oUsuarioBean.getNombre());
             oPreparedStatement.setString(3, oUsuarioBean.getApe1());
             oPreparedStatement.setString(4, oUsuarioBean.getApe2());
-            oPreparedStatement.setInt(5, oUsuarioBean.getId_tipoUsuario());
+            oPreparedStatement.setString(5, oUsuarioBean.getLogin());
+            oPreparedStatement.setString(6, oUsuarioBean.getPass());
+            oPreparedStatement.setInt(7, oUsuarioBean.getId_tipoUsuario());
             oPreparedStatement.executeUpdate();
             oResultSet = oPreparedStatement.getGeneratedKeys();
             if (oResultSet.next()) {
                 oUsuarioBean.setId(oResultSet.getInt(1));
+                oUsuarioBean.setPass(null);
             } else {
                 oUsuarioBean.setId(0);
+                oUsuarioBean.setPass(null);
             }
         } catch (SQLException e) {
             throw new Exception("Error en Dao create de " + ob, e);
@@ -132,7 +141,7 @@ public class UsuarioDao {
 
     public int update(UsuarioBean oUsuarioBean) throws Exception {
         int iResult = 0;
-        String strSQL = "UPDATE " + ob + " SET dni= ?, nombre= ?, ape1= ?, ape2= ?, id_tipousuario=? WHERE id = ?;";
+        String strSQL = "UPDATE " + ob + " SET dni = ?, nombre = ?, ape1 = ?, ape2 = ?, login = ?, pass = ?, id_tipoUsuario = ? WHERE id = ? ;";
 
         PreparedStatement oPreparedStatement = null;
         try {
@@ -141,8 +150,10 @@ public class UsuarioDao {
             oPreparedStatement.setString(2, oUsuarioBean.getNombre());
             oPreparedStatement.setString(3, oUsuarioBean.getApe1());
             oPreparedStatement.setString(4, oUsuarioBean.getApe2());
-            oPreparedStatement.setInt(5, oUsuarioBean.getId_tipoUsuario());
-            oPreparedStatement.setInt(6, oUsuarioBean.getId());
+            oPreparedStatement.setString(5, oUsuarioBean.getLogin());
+            oPreparedStatement.setString(6, oUsuarioBean.getPass());
+            oPreparedStatement.setInt(7, oUsuarioBean.getId_tipoUsuario());
+            oPreparedStatement.setInt(8, oUsuarioBean.getId());
             iResult = oPreparedStatement.executeUpdate();
 
         } catch (SQLException e) {
@@ -156,7 +167,7 @@ public class UsuarioDao {
     }
 
     public ArrayList<UsuarioBean> getpage(int iRpp, int iPage) throws Exception {
-        String strSQL = "SELECT * FROM "+ddbb+"."+ob;
+        String strSQL = "SELECT * FROM " + ob;
         ArrayList<UsuarioBean> alUsuarioBean;
         if (iRpp > 0 && iRpp < 100000 && iPage > 0 && iPage < 100000000) {
             strSQL += " LIMIT " + (iPage - 1) * iRpp + ", " + iRpp;
@@ -169,11 +180,17 @@ public class UsuarioDao {
                 while (oResultSet.next()) {
                     UsuarioBean oUsuarioBean = new UsuarioBean();
                     oUsuarioBean.setId(oResultSet.getInt("id"));
-                   // oFacturaBean.setDesc(oResultSet.getString("desc"));
+                    oUsuarioBean.setDni(oResultSet.getString("dni"));
+                    oUsuarioBean.setNombre(oResultSet.getString("nombre"));
+                    oUsuarioBean.setApe1(oResultSet.getString("ape1"));
+                    oUsuarioBean.setApe2(oResultSet.getString("ape2"));
+                    oUsuarioBean.setLogin(oResultSet.getString("login"));
+                    oUsuarioBean.setPass(null);
+                    oUsuarioBean.setId_tipoUsuario(oResultSet.getInt("id_tipoUsuario"));
                     alUsuarioBean.add(oUsuarioBean);
                 }
             } catch (SQLException e) {
-                throw new Exception("Error en Dao getpage de " + ob, e);
+                throw new Exception("Error en Dao getpage de " + ob , e);
             } finally {
                 if (oResultSet != null) {
                     oResultSet.close();
@@ -188,5 +205,4 @@ public class UsuarioDao {
         return alUsuarioBean;
 
     }
-
 }

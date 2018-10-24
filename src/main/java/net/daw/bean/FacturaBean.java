@@ -1,13 +1,22 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package net.daw.bean;
 
-import java.sql.Connection;
-import java.sql.Date;
+import java.util.Date;
 
+/**
+ *
+ * @author a044531896d
+ */
 public class FacturaBean {
 
+    private int id;
     private Date fecha;
-    private int id, id_usuario;
-    private float iva;
+    private double iva;
+    private int id_usuario;
 
     public int getId() {
         return id;
@@ -25,20 +34,20 @@ public class FacturaBean {
         this.fecha = fecha;
     }
 
+    public double getIva() {
+        return iva;
+    }
+
+    public void setIva(double iva) {
+        this.iva = iva;
+    }
+
     public int getId_usuario() {
         return id_usuario;
     }
 
     public void setId_usuario(int id_usuario) {
         this.id_usuario = id_usuario;
-    }
-
-    public float getIva() {
-        return iva;
-    }
-
-    public void setIva(float iva) {
-        this.iva = iva;
     }
 
 }
